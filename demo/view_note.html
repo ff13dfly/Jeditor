@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Jeditor,a simple JSON editor.</title>
+		<style type="text/css">
+			body{width: 900px;margin: 0 auto;}
+			p{margin: 0 auto;font-size:14px;}
+			hr{border: none;width:100%;height: 1px;background: #000000;}
+			.button_sample{background: #9AB5C6;border: none;width: 100px;height: 30px;border-radius: 5px;}
+		</style>
+		<script type="text/javascript" src="../lib/jquery-3.1.1.min.js" ></script>
+		<script type="text/javascript" src="../lib/moment.min.js" ></script>
+		<script type="text/javascript" src="../json_editor.js"></script>
+	</head>
+	<body>
+		<table border="0" style="width: 100%;background: #EEEEEE;height: 600px;">
+			<tr>
+				<td style="width: 70%;padding: 10px 10px 10px 10px;background: #FFFFFF;height: 400px;" valign="top">
+					<div id="json_con"></div>
+				</td>
+				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
+					<p>输入提示信息设置，对键值进行详细说明，方便输入正确信息。<br><br>设置该部分信息时，可以通过setting.row对显示宽度进行配置，方便阅读。</p>
+					<hr />
+					<p>Note setting</p>
+					<textarea id="note_setting" rows="9" style="width: 100%;">{"editorName":"请输入编辑器名称","slogan":"请输入口号","publishTime":"发布时间","version":"请输入版本号","intro":"请输入版本介绍说明"}</textarea>
+					<p>Row setting</p>
+					<textarea id="row_setting" rows="3" style="width: 100%;">{"row":{"left":3,"right":4,"note":4}}</textarea>
+					<p>JSON data</p>
+					<textarea id="json_string" rows="12" style="width: 100%;" disabled="disabled">{"editorName":"JSON editor","slogan":"A simple JSON editor","publishTime":"2021-01-02T06:19:24+08:00","versions":[{"version":"0.19","intro":"last version"},{"version":"0.12","intro":"stable version"},{"version":"0.1","intro":"base version"}]}</textarea>
+					<p style="width: 100%;text-align: center;"><button id="json_loader" class="button_sample">Load</button></p>
+				</td>
+			</tr>
+		</table>
+		<script type="text/javascript">
+			$("#json_loader").on('click',loadJSON).trigger('click');
+			
+			function loadJSON(){
+				const data=JSON.parse($("#json_string").val());
+				const note=JSON.parse($("#note_setting").val());
+				const row=JSON.parse($("#row_setting").val());
+				const cfg={
+					container:'#json_con',
+					name:'Input note setting',
+					note:note,
+					setting:row,
+				}	
+				Jeditor.init(data,cfg);
+			}
+		</script>
+	</body>
+</html>

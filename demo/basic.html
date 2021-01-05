@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Jeditor,a simple JSON editor.</title>
+		<style type="text/css">
+			body{width: 900px;margin: 0 auto;}
+			p{margin: 0 auto;}
+		</style>
+		<script type="text/javascript" src="../lib/jquery-3.1.1.min.js" ></script>
+		<script type="text/javascript" src="../lib/moment.min.js" ></script>
+		<script type="text/javascript" src="../json_editor.js"></script>
+	</head>
+	<body>
+		<table border="0" style="width: 100%;background: #EEEEEE;height: 600px;">
+			<tr>
+				<td style="width: 70%;padding: 10px 10px 10px 10px;background: #FFFFFF;height: 400px;" valign="top">
+					<div id="json_con"></div>
+				</td>
+				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
+					<p>Jeditor对JSON进行编辑，仅需一行代码：<br><br>Jeditor.init(json,{"container":ID})<br><br></p>
+					<hr />
+					<div style="width: 100%;display: block;margin: 5px 0px 5px 0px;height: 20px;line-height: 20px;">
+						<div style="width: 48%;float:left;text-align: left;margin: 0 auto;display: block;">JSON String</div>
+						<div style="width: 48%;float:right;text-align: right;margin: 0 auto;display: block;"><button id="json_loader">Load</button></div>
+					</div>
+					<textarea id="json_string" rows="18" style="width: 100%;">{"name":"JSON editor","basic key":"Easy to edit json data","numberSample":"od0012","timeSample":"2014-09-08T08:02:17-05:00","normal object":{"key a":"row a","key b":"row b","key c":{"suba":"Hello world","sub b":"Good day"},"subArray":["a","b","c","d"],"timeSample":"2015-03-08T17:02:17-05:00"},"basic Array":["element a","element b","element c"],"complexArray":[{"eleA":["aa","bb","cc"],"eleB":"good news"}],"enumSample":"FEMALE","images":""}</textarea>
+					<p>Result</p>
+					<textarea id="json_result" rows="12" style="width: 100%;" disabled=""></textarea>
+				</td>
+			</tr>
+		</table>
+		<script type="text/javascript">
+			$("#json_string").on('blur',loadJSON);
+			$("#json_loader").on('click',loadJSON).trigger('click');
+			
+			function loadJSON(){
+				const data=JSON.parse($("#json_string").val());
+				const cfg={
+					container:'#json_con',
+					onChange:function(res){
+						$("#json_result").val(JSON.stringify(res));
+					},
+				}	
+				Jeditor.init(data,cfg);
+			}
+		</script>
+	</body>
+</html>
