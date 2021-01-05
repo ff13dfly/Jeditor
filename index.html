@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>JSON编辑器</title>
+		<style type="text/css">
+			body{width: 960px;margin: 0 auto;}
+			p{margin: 0 auto;}
+		</style>
+		<script type="text/javascript" src="lib/jquery-3.1.1.min.js" ></script>
+		<script type="text/javascript" src="lib/moment.min.js" ></script>
+		<script src="json_editor.js" type="text/javascript" charset="utf-8"></script>
+		
+		<style type="text/css">
+		</style>
+	</head>
+	<body>
+		<table border="0" style="width: 100%;background: #EEEEEE;height: 600px;">
+			<tr>
+				<td style="width: 30%;padding: 10px 10px 10px 10px;">
+					<p>原始数据</p>
+					<textarea id="json_string" rows="20" style="width: 100%;">{"name":"JSON editor","basic key":"Easy to edit json data","numberSample":"od0012","timeSample":"2014-09-08T08:02:17-05:00","normal object":{"key a":"row a","key b":"row b","key c":{"suba":"Hello world","sub b":"Good day"},"subArray":["a","b","c","d"],"timeSample":"2015-03-08T17:02:17-05:00"},"basic Array":["element a","element b","element c"],"complexArray":[{"eleA":["aa","bb","cc"],"eleB":"good news"}],"enumSample":"FEMALE","images":""}</textarea>
+					<p>编辑结果</p>
+					<textarea id="json_result" rows="20" style="width: 100%;"></textarea>
+				</td>
+				<td style="width: 70%;padding: 10px 10px 10px 10px;background: #FFFFFF;">
+					<div id="json_con"></div>
+				</td>
+			</tr>
+		</table>
+		<script type="text/javascript">
+			loadJSON();
+			$("#json_string").on('blur',loadJSON);
+			//2020-02-08T02:01:13+04:00
+			function loadJSON(){
+				const cfg={
+					container:'#json_con',
+					onChange:function(res){
+						$("#json_result").val(JSON.stringify(res));
+					},
+					hide:[
+						['normal object'],
+					],
+					fixed:[
+						['enumSample'],
+						['basic Array','0'],
+						//['complexArray'],
+					],
+					format:{
+						'enumSample':{
+							'type':'enum',
+							'data':[
+								{title:'女性',value:'FEMALE'},
+								{title:'男性',value:'MALE'},
+							],
+						},
+						'images':{
+							'type':'image',
+							'default':{
+								placeholder:'请选择图像文件',
+								maxSize:1024*1024,
+								toBase64:true,
+							},
+						},
+						'timeSample':{
+							'type':'time',
+							'default':{
+								timeZone:true,
+								format:"YYYY-MM-DDTHH:mm:ssZ",
+							},
+						},
+					},
+					lang:{
+						'name':'名称',
+						'enumSample':'枚举',
+						'basic key':'基本键值',
+					},
+					note:{
+						'name':'名称',
+						'enumSample':'枚举',
+					}
+				}
+				Jeditor.init(JSON.parse($("#json_string").val()),cfg);
+			}
+		</script>
+	</body>
+</html>
