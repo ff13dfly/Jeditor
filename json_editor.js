@@ -396,7 +396,7 @@
 							ctx=self.getImage(id,v,disable,format[k].default);
 							break;
 						case 'time':
-							ctx=self.getTime(id,v,disable,format[k].default);
+							ctx=self.getTime(id,v,disable,!format[k].default?{}:format[k].default);
 							break;
 						default:
 							ctx=self.getInput(id,v,disable);
