@@ -591,11 +591,16 @@
 			
 			return za+zc+zb;
 		},
+		clearActive:function(){
+			console.log('clear active:'+config.container);
+			//$('#'+config.container).find('.active').removeClass('active');
+		},
 		getBool:function(id,v,disable,cfg){
 			const checked=v?'"checked"':'';
 			agent.push(function(){
 				if(v==true){
 					$("#"+id).trigger('click');
+					//self.clearActive();
 				}
 				
 				$("#"+id).off('blur').on('click',function(){
@@ -798,8 +803,8 @@
 			#${id} .${config.clsImgButton} img{width:24px;height:24px;opacity:0.2;margin:8px 0px 0px 0px;}
 			#${id} .${config.clsImgButton} img:hover{opacity:0.5;}
 			#${id} .${config.clsHide}{background:${config.ui.color.hide};}
-			#${id} .${config.clsBool}{width:${ih*2+2}px;height:${ih+2}px;position:relative;margin:5px 0px 0px 0px;padding:0px 2px 0px 2px;border-radius:14px;}
-			#${id} .${config.clsBool}:before{ content:"";width:${ih}px;height:${ih+2}px;position:absolute;left:0;top:0;z-index:1;border-radius:14px;}
+			#${id} .${config.clsBool}{width:${ih*2+2}px;height:${ih+2}px;position:relative;margin:5px 0px 0px 0px;padding:0px 2px 0px 2px;border-radius:${ih*0.5}px;}
+			#${id} .${config.clsBool}:before{ content:"";width:${ih}px;height:${ih+2}px;position:absolute;left:0;top:0;z-index:1;border-radius:${ih*0.5}px;}
 			#${id} .${config.clsBool}:after{content:"";width:${ih}px;height:${ih+2}px;position:absolute;right:0;top:0;border-radius:14px;}
 			#${id} .${config.clsBool} input[type=checkbox]{position:absolute;opacity: 0;}
 			#${id} .${config.clsBool} input[type=checkbox]:checked+label:before{background:#3ccd58;}
