@@ -35,6 +35,7 @@
 		clsLong:hash(),
 		clsHide:hash(),			//编辑模式下隐藏项的样式
 		clsImgButton:hash(),
+		clsBool:hash(),
 		row:{
 			left:4,
 			right:6,
@@ -398,6 +399,9 @@
 						case 'time':
 							ctx=self.getTime(id,v,disable,!format[k].default?{}:format[k].default);
 							break;
+						case 'bool':
+							ctx=self.getBool(id,v,disable);
+							break;
 						default:
 							ctx=self.getInput(id,v,disable);
 							break;
@@ -476,6 +480,7 @@
 			for(let i=0;i<chain.length;i++) str+=chain[i]+'_';
 			return self.removeSpace(str+k,config.connector);
 		},
+
 		getTime:function(id,v,disable,cfg){
 			const idYear=hash(),idMonth=hash(),idDay=hash(),idHour=hash(),idMin=hash(),idSec=hash(),idZone=hash();
 			const mt=!cfg.format?moment(v):moment(v,cfg.format);
@@ -585,6 +590,32 @@
 			}
 			
 			return za+zc+zb;
+		},
+		getBool:function(id,v,disable,cfg){
+			const checked=v?'"checked"':'';
+			agent.push(function(){
+				if(v==true){
+					$("#"+id).trigger('click');
+				}
+				
+				$("#"+id).off('blur').on('click',function(){
+					const val=$(this).is(':checked');
+					const chain=$(this).attr('id').split('_');
+					
+					if(val)$(this).attr("checked","checked");
+					else $(this).removeAttr('checked');
+					const dd=!val;
+					
+					console.log('clicked,value:'+val+',changed:'+dd);
+					
+					$(this).val(!dd);
+					self.save(dd,chain);
+				});
+			});
+			return `<div class="${config.clsBool}">
+				<input type="checkbox" id="${id}" value="${v}" ${checked}/>
+				<label for="${id}"></label>
+			</div>`;
 		},
 
 		getImage:function(id,v,disable,cfg){
@@ -767,6 +798,15 @@
 			#${id} .${config.clsImgButton} img{width:24px;height:24px;opacity:0.2;margin:8px 0px 0px 0px;}
 			#${id} .${config.clsImgButton} img:hover{opacity:0.5;}
 			#${id} .${config.clsHide}{background:${config.ui.color.hide};}
+			#${id} .${config.clsBool}{width:${ih*2+2}px;height:${ih+2}px;position:relative;margin:5px 0px 0px 0px;padding:0px 2px 0px 2px;border-radius:14px;}
+			#${id} .${config.clsBool}:before{ content:"";width:${ih}px;height:${ih+2}px;position:absolute;left:0;top:0;z-index:1;border-radius:14px;}
+			#${id} .${config.clsBool}:after{content:"";width:${ih}px;height:${ih+2}px;position:absolute;right:0;top:0;border-radius:14px;}
+			#${id} .${config.clsBool} input[type=checkbox]{position:absolute;opacity: 0;}
+			#${id} .${config.clsBool} input[type=checkbox]:checked+label:before{background:#3ccd58;}
+			#${id} .${config.clsBool} label{width:${ih}px;height:${ih}px;position:relative;margin:1px 0px 0px 0px;}
+			#${id} .${config.clsBool} label:before{content:"";width:${ih*2}px;height:${ih-2}px;position:absolute;background:#DDDDDD;border-radius:14px;margin:1px 0px 0px 0px;}
+			#${id} .${config.clsBool} label:after{content:"";width:${ih}px;height:${ih-2}px;position:absolute;left:0;border-radius:14px;margin:1px 0px 0px 0px;background:#EEEEEE;z-index:2;transition:all 0.2s ease;}
+			#${id} .${config.clsBool} input[type=checkbox]:checked+label:after{left:${ih}px;}
 			</style>`;
 		},
 		hash:hash,
