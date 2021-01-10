@@ -65,8 +65,13 @@
 	let hide=[];		//需要隐藏的队列
 	let agent=[];		//其他需要在dom加载之后运行的程序的队列
 	const events={
-		onChange:null,
-		onReload:null,
+		onChange:null,			//数据变化事件
+		onReload:null,			//数据重载事件
+		onAdd:null,				//数据条目添加事件
+		onRemove:null,		//数据条目移除事件
+		onUpload:null,			//数据上传事件
+		onSwitch:null,			//boolean数据转换事件
+		onSelect:null,			//枚举类型转换事件，用于处理数据重载
 	}
 	
 	const self={
