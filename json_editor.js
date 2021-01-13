@@ -287,14 +287,18 @@
 			
 			//4.title选中整行的操作
 			$("."+config.clsRow).off('click').on('click',function(){
-				$(sel).find('.active').removeClass('active')
-				$(this).addClass('active');
-				
-				const chain=$(this).attr('path').split('_');
-				if(chain.length==1 || self.getType(chain)=='object'){
-					$("."+config.clsAddContainer).show();
+				if($(this).hasClass('active')){
+					$(this).removeClass('active');
 				}else{
-					$("."+config.clsAddContainer).hide();
+					$(sel).find('.active').removeClass('active')
+					$(this).addClass('active');
+					
+					const chain=$(this).attr('path').split('_');
+					if(chain.length==1 || self.getType(chain)=='object'){
+						$("."+config.clsAddContainer).show();
+					}else{
+						$("."+config.clsAddContainer).hide();
+					}
 				}
 			});
 			
