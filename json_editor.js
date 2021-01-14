@@ -1,6 +1,7 @@
 ;(function($){
 	const appName="Jeditor";
 	let cache,backup;
+	const agent=[];		//其他需要在dom加载之后运行的程序的队列
 	const hash=function(n,pre){return (!pre?'c':pre)+Math.random().toString(32).substr(n!=undefined?n:6)};
 	
 	const icons={
@@ -65,7 +66,8 @@
 	let note={};		//说明部分的添加
 	let format={};		//特殊的格式约定部分，目前处理枚举部分
 	let hide=[];		//需要隐藏的队列
-	let agent=[];		//其他需要在dom加载之后运行的程序的队列
+	let lock=[];		//需要锁定的队列
+	
 	const events={
 		onChange:null,			//数据变化事件
 		onReload:null,			//数据重载事件
@@ -232,12 +234,12 @@
 			if(cfg.setting!=undefined)for(let k in cfg.setting)if(config[k]!=undefined) config[k]=self.clone(cfg.setting[k]);
 			for(var k in events)if(cfg[k]) events[k]=cfg[k];
 			if(cfg.hide)for(let i=0,len=cfg.hide.length;i<len;i++){
-				const k=cfg.hide[i];
-				if(Array.isArray(k)){
-					hide[self.getChainKey(k)]=true;
-				}else{
-					hide[self.getChainKey([k])]=true;
-				}
+				const hk=cfg.hide[i];
+				hide[self.getChainKey(Array.isArray(hk)?hk:[hk])]=true;
+			}
+			if(cfg.lock)for(let i=0,len=cfg.lock.length;i<len;i++){
+				const kk=cfg.lock[i];
+				lock[self.getChainKey(Array.isArray(kk)?kk:[kk])]=true;
 			}
 			config.container=cfg.container;
 		},
@@ -274,7 +276,7 @@
 				
 			//3.添加数组条目的操作
 			$("."+config.clsArrayAdd).off('click').on('click',function(){
-				event.stopPropagation();
+				//$(this).parent().parent().parent().trigger('click');
 				const chain=$(this).attr('id').split('_');
 				const list=self.getArray(chain);
 				list.push(list.length==0?'new row':self.clone(list[0]));
@@ -323,9 +325,14 @@
 				const id=self.getIDbyChain(k,chain);
 				const title=config.mode=='edit'?k:(!lang[k]?k:lang[k]);
 				const txt=!note[k]?'<p>&nbsp;</p>':'<p>'+note[k]+'</p>';
+				
+				const nchain=self.clone(chain);
+				nchain.push(k);
+				const dis=disable||lock[self.getChainKey(nchain)];
+				
 				if(isShow(obj[k])){
 					//1.平直状态，不需要再遍历
-					str+=domRow(k,obj[k],dep,chain,disable);
+					str+=domRow(k,obj[k],dep,chain,dis);
 				}else{
 					//2.子容器状态，还需要再遍历出数据
 					const ccTitle=col+'-'+left+' '+clsTitle;
@@ -339,7 +346,7 @@
 						if(!skip ){
 							const ctxTitle=bks+title;
 							str+=`<div class="${clsRow} depth_${dep} ${ccHide}" path="${id}"><div class="${ccTitle}">${ctxTitle}<button class="${config.clsShrink}" target="${target}">-</button></div>`;
-							if(disable){
+							if(dis){
 								str+=`<div class="${ccBody}">&nbsp;</div>`;
 							}else{
 								str+=`<div class="${ccBody}"><button id="${target}" class="${config.clsArrayAdd}">${config.ui.title.rowAdd}</button></div>`;
@@ -352,7 +359,7 @@
 								str+=`<div class="${ccNote}">${txt}</div></div>`;
 							}
 						} 
-						const rst=self.loop(obj[k],dep+1,false,disable,nc);
+						const rst=self.loop(obj[k],dep+1,false,dis,nc);
 						str+=`<div id="con_${target}" class="${ccHide}">${rst}</div>`;
 					}else{
 						if(!skip){
@@ -368,7 +375,7 @@
 							}
 						}
 						str+='<div id="con_'+target+'" class="'+ccHide+'">';
-						str+=self.loop(obj[k],dep+1,false,disable,nc);
+						str+=self.loop(obj[k],dep+1,false,dis,nc);
 						str+='</div>';
 					}
 				}
@@ -506,8 +513,9 @@
 			const cy=mt.format('YYYY'),cm=mt.format('M'),cd=mt.format('D');
 			const ch=mt.format('H'),cn=mt.format('m'),cs=mt.format('s');
 			const cz=mt.format('Z');
+			const dis=disable?'disabled="disabled"':'';
 			
-			const zone=cfg.timeZone?`<td><select id="${idZone}" style="margin-right:10px;">${self.getTimeZoneSelector(cz)}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
+			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${self.getTimeZoneSelector(cz)}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
 			
 			const saveTime=function(){
 				const year=parseInt($("#"+idYear).val());
@@ -640,7 +648,11 @@
 				<label for="${id}"></label>
 			</div>`;
 		},
-
+		
+		getEmail:function(id,v,disable,cfg){},
+		getMobile:function(id,v,disable,cfg){},
+		getList:function(id,v,disable,cfg){},
+		
 		getImage:function(id,v,disable,cfg){
 			const cls=config.clsInput,dis=disable?'disabled="disabled"':'';
 			const info_con='file_'+id;
@@ -648,6 +660,7 @@
 			const form='<input class="'+cls+' form-control '+config.clsFile+'" id="'+id+'" type="file" value="'+v+'" '+dis+' accept="image/png,image/jpeg,image/jpg,image/gif"/>';
 			const thumb=v==''?'&nbsp;':'<img width="48" height="30" src="'+v+'">';
 			const size=v==''?'&nbsp;':self.formatSize(v.length);
+			
 			
 			agent.push(function(){
 				$("#"+id).off('blur').off('change').on('change',function(res){
