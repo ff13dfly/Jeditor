@@ -5,7 +5,7 @@
 		<title>Jeditor-a simple json editor</title>
 		<style type="text/css">
 			body{width: 1080px;margin: 0 auto;padding: 15px 0px 0px 0px;}
-			.active{background: #CCCCCC;}
+			.active{background: #BBBBBB;}
 			nav{width: 160px; height:100%;float: left;margin: 0 auto;overflow: hidden;padding:0px 0px 0px 0px;-webkit-user-select: none;}
 			ul{margin: 0 auto;}
 			hr{height: 1px;border: none;background: #EEEEEE;margin:0px 0px 0px 0px;}
@@ -20,39 +20,52 @@
 	<body>
 		<nav>
 			<ul>
-				<li><span>基础</span></li>
-				<li><a href="#basic"><span>基础显示</span></a></li>
-				<li><a href="#mode_edit" ><span>编辑模式</span></a></li>
-				<li><a href="#mode_header" ><span>隐藏头部</span></a></li>
+				<li class="cat"><span>基础</span></li>
+					<div>
+						<li><a href="#basic"><span>基础显示</span></a></li>
+						<li><a href="#mode_edit" ><span>编辑模式</span></a></li>
+						<li><a href="#mode_header" ><span>隐藏头部</span></a></li>
+					</div>
 				<hr />
-				<li><span>显示配置</span></li>
-				<li><a href="#view_lang" ><span>多语言</span></a></li>
-				<li><a href="#view_note" ><span>注释</span></a></li>
-				<li><a href="#view_hide" ><span>隐藏</span></a></li>
-				<li><a href="#view_fixed" ><span>锁定</span></a></li>
+				<li class="cat"><span>显示配置</span></li>
+					<div style="display: none;">
+						<li><a href="#view_lang" ><span>多语言</span></a></li>
+						<li><a href="#view_note" ><span>注释</span></a></li>
+						<li><a href="#view_hide" ><span>隐藏</span></a></li>
+						<li><a href="#view_fixed" ><span>锁定</span></a></li>
+					</div>
 				<hr />
-				<li><span>数据类型</span></li>
-				<li><a href="#format_time" ><span>日期</span></a></li>
-				<li><a href="#format_enum" ><span>枚举</span></a></li>
-				<li><a href="#format_list" ><span>列表</span></a></li>
-				<li><a href="#format_image" ><span>图像</span></a></li>
-				<li><a href="#format_file" ><span>文件</span></a></li>
-				<li><a href="#format_bool" ><span>布尔值</span></a></li>
-				<li><a href="#format_email" ><span>电子邮件</span></a></li>
-				<li><a href="#format_mobile" ><span>手机</span></a></li>
-				<li><a href="#format_number" ><span>数字</span></a></li>
-				<li><a href="#format_text" ><span>字符串</span></a></li>
+				<li class="cat"><span>数据类型</span></li>
+					<div style="display: none;">
+						<li><a href="#format_time" ><span>日期</span></a></li>
+						<li><a href="#format_enum" ><span>枚举</span></a></li>
+						<li><a href="#format_list" ><span>列表</span></a></li>
+						<li><a href="#format_image" ><span>图像</span></a></li>
+						<li><a href="#format_file" ><span>文件</span></a></li>
+						<li><a href="#format_bool" ><span>布尔值</span></a></li>
+						<li><a href="#format_email" ><span>电子邮件</span></a></li>
+						<li><a href="#format_mobile" ><span>手机</span></a></li>
+						<li><a href="#format_number" ><span>数字</span></a></li>
+						<li><a href="#format_text" ><span>字符串</span></a></li>
+					</div>
 				<hr />
-				<li><span>事件</span></li>
-				<li><a href="#event_change" ><span>change</span></a></li>
-				<li><a href="#event_add" ><span>add</span></a></li>
-				<li><a href="#event_reload" ><span>reload</span></a></li>
+				<li class="cat"><span>事件</span></li>
+					<div style="display: none;">
+						<li><a href="#event_change" ><span>change</span></a></li>
+						<li><a href="#event_add" ><span>add</span></a></li>
+						<li><a href="#event_reload" ><span>reload</span></a></li>
+						<li><a href="#event_upload" ><span>upload</span></a></li>
+						<li><a href="#event_switch" ><span>switch</span></a></li>
+						<li><a href="#event_select" ><span>select</span></a></li>
+					</div>
 				<hr />
-				<li><span>功能</span></li>
-				<li><a href="#fun_export" ><span>数据导出</span></a></li>
-				<li><a href="#fun_mode" ><span>模式切换</span></a></li>
-				<li><a href="#fun_new" ><span>新添</span></a></li>
-				<li><a href="#fun_recover" ><span>还原</span></a></li>
+				<li class="cat"><span>功能</span></li>
+					<div style="display: none;">
+						<li><a href="#fun_export" ><span>数据导出</span></a></li>
+						<li><a href="#fun_mode" ><span>模式切换</span></a></li>
+						<li><a href="#fun_new" ><span>新添</span></a></li>
+						<li><a href="#fun_recover" ><span>还原</span></a></li>
+					</div>
 			</ul>
 		</nav>
 		<article id="frame">
@@ -65,6 +78,11 @@
 				
 				const target=$(this).attr('href').substr(1);
 				$("iframe").attr('src','demo/'+target+'.html');
+			});
+			
+			$(".cat").on('click',function(){
+				const sel=$(this).next();
+				sel.is(":hidden")?sel.slideDown():sel.slideUp();
 			});
 			
 			const hash=location.hash.substr(1);

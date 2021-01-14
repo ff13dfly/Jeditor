@@ -55,6 +55,7 @@
 		name:'JSON Editor',
 		mode:'view',				//编辑器的模式[view,edit]
 		headerShow:true,		//顶部显示的配置
+		addShow:true,			//显示array的添加按钮
 		container:'',				//容器id
 		connector:hash(),		//代替空格的字符串
 		more:false,				//是否对more进行显示
@@ -224,14 +225,11 @@
 			return typeof tmp;
 		},
 		setting:function(cfg){
-			console.log(cfg);
 			if(cfg.name)config.name=cfg.name;
 			if(cfg.lang)lang=self.clone(cfg.lang);
 			if(cfg.note)note=self.clone(cfg.note);
 			if(cfg.format)format=self.clone(cfg.format);
-			if(cfg.setting!=undefined){
-				for(let k in cfg.setting)if(config[k]!=undefined) config[k]=self.clone(cfg.setting[k]);
-			}
+			if(cfg.setting!=undefined)for(let k in cfg.setting)if(config[k]!=undefined) config[k]=self.clone(cfg.setting[k]);
 			for(var k in events)if(cfg[k]) events[k]=cfg[k];
 			if(cfg.hide)for(let i=0,len=cfg.hide.length;i<len;i++){
 				const k=cfg.hide[i];
@@ -263,6 +261,7 @@
 			
 			//2.展开和收起子容器的操作
 			$("."+config.clsShrink).off('click').on('click',function(){
+				event.stopPropagation();		//防止冒泡，不然会触发row的click
 				const tg='#con_'+$(this).attr('target');
 				if($(tg).is(":hidden")){
 					$(this).html('-');
@@ -275,13 +274,10 @@
 				
 			//3.添加数组条目的操作
 			$("."+config.clsArrayAdd).off('click').on('click',function(){
+				event.stopPropagation();
 				const chain=$(this).attr('id').split('_');
 				const list=self.getArray(chain);
-				if(list.length==0){
-					list.push('new row');
-				}else{
-					list.push(self.clone(list[0]));
-				}
+				list.push(list.length==0?'new row':self.clone(list[0]));
 				self.save(list,chain);
 				self.init(cache,cfg,true);
 			});
@@ -390,7 +386,6 @@
 			const ctxTitle=bks+title;
 			const id=self.getIDbyChain(k,chain);
 			
-			
 			const hkey=self.getChainKey(chain,k);
 			const ccHide=hide[hkey]?config.clsHide:'';
 			
@@ -412,6 +407,18 @@
 							break;
 						case 'bool':
 							ctx=self.getBool(id,v,disable);
+							break;
+						case 'file':
+							ctx=self.getInput(id,v,disable);
+							break;
+						case 'list':
+							ctx=self.getInput(id,v,disable);
+							break;
+						case 'email':
+							ctx=self.getInput(id,v,disable);
+							break;
+						case 'mobile':
+							ctx=self.getInput(id,v,disable);
 							break;
 						default:
 							ctx=self.getInput(id,v,disable);
