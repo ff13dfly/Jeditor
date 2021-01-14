@@ -53,8 +53,9 @@
 			},
 		},
 		name:'JSON Editor',
-		mode:'view',			//编辑器的模式[view,edit]
-		container:'',			//容器id
+		mode:'view',				//编辑器的模式[view,edit]
+		headerShow:true,		//顶部显示的配置
+		container:'',				//容器id
 		connector:hash(),		//代替空格的字符串
 		more:false,				//是否对more进行显示
 	}
@@ -102,6 +103,7 @@
 		},
 		
 		header:function(){
+			if(config.headerShow==false) return '';
 			const id=hash(),btnRecover=hash(),btnExport=hash(),btnMore=hash(),btnMode=hash(),btnConfigExport=hash();
 			const imgMode=config.mode=='view'?icons.struct:icons.boxed;
 			
@@ -221,15 +223,15 @@
 			}
 			return typeof tmp;
 		},
-		uiSetting:function(){
-
-		},
 		setting:function(cfg){
+			console.log(cfg);
 			if(cfg.name)config.name=cfg.name;
 			if(cfg.lang)lang=self.clone(cfg.lang);
 			if(cfg.note)note=self.clone(cfg.note);
 			if(cfg.format)format=self.clone(cfg.format);
-			if(cfg.setting)for(let k in cfg.setting)if(config[k]) config[k]=self.clone(cfg.setting[k]);
+			if(cfg.setting!=undefined){
+				for(let k in cfg.setting)if(config[k]!=undefined) config[k]=self.clone(cfg.setting[k]);
+			}
 			for(var k in events)if(cfg[k]) events[k]=cfg[k];
 			if(cfg.hide)for(let i=0,len=cfg.hide.length;i<len;i++){
 				const k=cfg.hide[i];
@@ -729,8 +731,10 @@
 				return obj;
 			}else if(Array.isArray(obj)){
 				return $.extend(true,[],obj);
-			}else{
+			}else if($.isPlainObject(obj)){
 				return $.extend(true,{},obj);
+			}else{
+				return obj;
 			}
 		},
 		result:function(){
