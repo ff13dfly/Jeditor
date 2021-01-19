@@ -686,7 +686,7 @@
 					const chain=$(this).attr('id').split('_');
 					const fa=res.target.files[0];
 					if(fa.size>cfg.maxSize) return $("#"+info_con).html('max size:'+self.formatSize(cfg.max));
-					const result={chain:chain,file:fa};
+					const result={chain:chain,value:fa};
 					$("#"+info_con).html('uploading...');
 					if(events.onUpload!=null) events.onUpload(result,function(val){
 						$("#"+info_con).html('uploaded');
@@ -764,6 +764,8 @@
 				$("#"+id).off('change').on('change',function(){
 					const chain=$(this).attr('id').split('_'),val=$(this).val();
 					self.save(val,chain);
+					const result={value:val,chain:chain}
+					if(events.onSelect) events.onSelect(result);
 				});
 			});
 			return `<select class="${config.clsInput}" id="${id}" ${dis}>${dom}</select>`;
