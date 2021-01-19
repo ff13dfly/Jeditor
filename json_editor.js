@@ -425,10 +425,10 @@
 							ctx=self.getInput(id,v,disable);
 							break;
 						case 'email':
-							ctx=self.getInput(id,v,disable);
+							ctx=self.getEmail(id,v,disable,!format[k].default?{}:format[k].default);
 							break;
 						case 'mobile':
-							ctx=self.getInput(id,v,disable);
+							ctx=self.getMobile(id,v,disable,!format[k].default?{}:format[k].default);
 							break;
 						default:
 							ctx=self.getInput(id,v,disable);
@@ -652,10 +652,6 @@
 			</div>`;
 		},
 		
-		getEmail:function(id,v,disable,cfg){},
-		getMobile:function(id,v,disable,cfg){},
-		getList:function(id,v,disable,cfg){},
-		
 		getImage:function(id,v,disable,cfg){
 			const cls=config.clsInput,dis=disable?'disabled="disabled"':'';
 			const info_con='file_'+id;
@@ -689,7 +685,7 @@
 				$("#"+id).off('blur').off('change').on('change',function(res){
 					const chain=$(this).attr('id').split('_');
 					const fa=res.target.files[0];
-					if(fa.size>cfg.maxSize) return $("#"+info_con).html('文件最大为:'+self.formatSize(cfg.max));
+					if(fa.size>cfg.maxSize) return $("#"+info_con).html('max size:'+self.formatSize(cfg.max));
 					const result={chain:chain,file:fa};
 					$("#"+info_con).html('uploading...');
 					if(events.onUpload!=null) events.onUpload(result,function(val){
@@ -701,6 +697,40 @@
 				});
 			});
 			return `<table><tr><td>${form}</td><td id="${info_con}"></td></tr></table>`;
+		},
+		getEmail:function(id,v,disable,cfg){
+			const dis=disable?'disabled="disabled"':'';
+			agent.push(function(){
+				$("#"+id).off('blur').on('blur',function(res){
+					$(this).css({'background':'#FFFFFF'});
+					const chain=$(this).attr('id').split('_');
+					const val=$(this).val();
+					const rule=!cfg.rule?/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/:cfg.rule;
+					if(rule.test(val)){
+						self.save(val,chain);
+					}else{
+						$(this).css({'background':'#FEEEEE'});
+					}
+				});
+			});
+			return `<input class="${config.clsInput} form-control" id="${id}" type="text" value="${v}" ${dis}/>`;
+		},
+		getMobile:function(id,v,disable,cfg){
+			const dis=disable?'disabled="disabled"':'';
+			agent.push(function(){
+				$("#"+id).off('blur').on('blur',function(res){
+					$(this).css({'background':'#FFFFFF'});
+					const chain=$(this).attr('id').split('_');
+					const val=$(this).val();
+					const rule=!cfg.rule?/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/:cfg.rule;
+					if(rule.test(val)){
+						self.save(val,chain);
+					}else{
+						$(this).css({'background':'#FEEEEE'});
+					}
+				});
+			});
+			return `<input class="${config.clsInput} form-control" id="${id}" type="text" value="${v}" ${dis}/>`;
 		},
 		formatSize:function(size){
 			const k=1024,m=1048576;
