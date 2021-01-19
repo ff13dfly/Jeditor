@@ -227,12 +227,15 @@
 			return typeof tmp;
 		},
 		setting:function(cfg){
+			console.log(cfg)
 			if(cfg.name)config.name=cfg.name;
 			if(cfg.lang)lang=self.clone(cfg.lang);
 			if(cfg.note)note=self.clone(cfg.note);
 			if(cfg.format)format=self.clone(cfg.format);
 			if(cfg.setting!=undefined)for(let k in cfg.setting)if(config[k]!=undefined) config[k]=self.clone(cfg.setting[k]);
-			for(var k in events)if(cfg[k]) events[k]=cfg[k];
+			for(var k in events){
+				if(cfg[k]!=undefined && typeof cfg[k] === "function") events[k]=cfg[k];
+			}
 			if(cfg.hide)for(let i=0,len=cfg.hide.length;i<len;i++){
 				const hk=cfg.hide[i];
 				hide[self.getChainKey(Array.isArray(hk)?hk:[hk])]=true;
@@ -413,10 +416,10 @@
 							ctx=self.getTime(id,v,disable,!format[k].default?{}:format[k].default);
 							break;
 						case 'bool':
-							ctx=self.getBool(id,v,disable);
+							ctx=self.getInput(id,v,disable);
 							break;
 						case 'file':
-							ctx=self.getInput(id,v,disable);
+							ctx=self.getFile(id,v,disable,!format[k].default?{}:format[k].default);
 							break;
 						case 'list':
 							ctx=self.getInput(id,v,disable);
@@ -621,12 +624,12 @@
 			console.log('clear active:'+config.container);
 			//$('#'+config.container).find('.active').removeClass('active');
 		},
+
 		getBool:function(id,v,disable,cfg){
 			const checked=v?'"checked"':'';
 			agent.push(function(){
 				if(v==true){
 					$("#"+id).trigger('click');
-					//self.clearActive();
 				}
 				
 				$("#"+id).off('blur').on('click',function(){
@@ -676,6 +679,28 @@
 				});
 			});
 			return `<table><tr><td>${form}</td><td id="${info_con}">${thumb}</td><td id="${size_con}">${size}</td></tr></table>`;
+		},
+		getFile:function(id,v,disable,cfg){
+			const cls=config.clsInput,dis=disable?'disabled="disabled"':'';
+			const info_con=hash()+'_'+id;
+			const form='<input class="'+cls+' form-control '+config.clsFile+'" id="'+id+'" type="file" value="'+v+'" '+dis+' accept="*/*"/>';
+			const size=v==''?'&nbsp;':self.formatSize(v.length);
+			agent.push(function(){
+				$("#"+id).off('blur').off('change').on('change',function(res){
+					const chain=$(this).attr('id').split('_');
+					const fa=res.target.files[0];
+					if(fa.size>cfg.maxSize) return $("#"+info_con).html('文件最大为:'+self.formatSize(cfg.max));
+					const result={chain:chain,file:fa};
+					$("#"+info_con).html('uploading...');
+					if(events.onUpload!=null) events.onUpload(result,function(val){
+						$("#"+info_con).html('uploaded');
+						setTimeout(function(){
+							self.save(val,chain);
+						},200);
+					});
+				});
+			});
+			return `<table><tr><td>${form}</td><td id="${info_con}"></td></tr></table>`;
 		},
 		formatSize:function(size){
 			const k=1024,m=1048576;

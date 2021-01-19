@@ -19,7 +19,7 @@
 			<tr>
 				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
 					<p>原始数据</p>
-					<textarea  id="json_string" rows="20" style="width: 100%;">{"name":"JSON editor","basic key":"Easy to edit json data","numberSample":"od0012","timeSample":"2014-09-08T08:02:17-05:00","boolSample":true,"normal object":{"key a":"row a","key b":"row b","key c":{"suba":"Hello world","sub b":"Good day"},"subArray":["a","b","c","d"],"timeSample":"2015-03-08T17:02:17-05:00"},"basic Array":["element a","element b","element c"],"complexArray":[{"eleA":["aa","bb","cc"],"eleB":"good news"}],"enumSample":"FEMALE","images":""}</textarea>
+					<textarea  id="json_string" rows="20" style="width: 100%;">{"name":"JSON editor","basic key":"Easy to edit json data","numberSample":"od0012","fileSample":"http://localhost/Jeditor/README.md","timeSample":"2014-09-08T08:02:17-05:00","boolSample":true,"normal object":{"key a":"row a","key b":"row b","key c":{"suba":"Hello world","sub b":"Good day"},"subArray":["a","b","c","d"],"timeSample":"2015-03-08T17:02:17-05:00"},"basic Array":["element a","element b","element c"],"complexArray":[{"eleA":["aa","bb","cc"],"eleB":"good news"}],"enumSample":"FEMALE","images":""}</textarea>
 					<p>编辑结果</p>
 					<textarea id="json_result" rows="20" style="width: 100%;"></textarea>
 				</td>
@@ -38,8 +38,14 @@
 					onChange:function(res){
 						$("#json_result").val(JSON.stringify(res));
 					},
+					onUpload:function(res,ck){
+						console.log(res);
+						//do the upload here.
+						const result="http://localhost/Jeditor/LICENSE";
+						ck && ck(result);
+					},
 					setting:{
-						//headerShow:false,
+						
 					},
 					hide:[
 						['normal object'],
@@ -49,6 +55,14 @@
 						['basic Array','0'],
 					],
 					format:{
+						'fileSample':{
+							'type':'file',
+							'default':{
+								placeholder:'请选择上传文件',
+								maxSize:1024*1024,
+								toBase64:true,
+							},
+						},
 						'enumSample':{
 							'type':'enum',
 							'data':[
@@ -83,7 +97,8 @@
 					note:{
 						'name':'名称',
 						'enumSample':'枚举',
-					}
+					},
+					
 				}
 				Jeditor.init(JSON.parse($("#json_string").val()),cfg);
 			}
