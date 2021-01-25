@@ -20,13 +20,13 @@
 					<div id="json_con"></div>
 				</td>
 				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
-					<p>配置键值对应的名称，在方便阅读和理解的同时，能方便的支持多语言显示。<br><br>顶部按钮 <img src="../icon/exportSetting.png" style="width:18px;height:18px;"> 可导出配置进行保存。<br><br>顶部按钮 <img src="../icon/struct.png" style="width:18px;height:18px;"> 可切换到编辑模式，查看原始键值名。</p>
+					<p>输入提示信息设置，对键值进行详细说明，方便输入正确信息。<br><br>设置该部分信息时，可以通过setting.row对显示宽度进行配置，方便阅读。</p>
 					<hr />
 					<div style="width: 100%;display: block;margin: 5px 0px 5px 0px;height: 20px;line-height: 20px;">
-						<div style="width: 48%;float:left;text-align: left;margin: 0 auto;display: block;">Lang setting</div>
+						<div style="width: 48%;float:left;text-align: left;margin: 0 auto;display: block;">Title setting</div>
 						<div style="width: 48%;float:right;text-align: right;margin: 0 auto;display: block;"><button id="json_loader" class="button_sample">Load</button></div>
 					</div>
-					<textarea id="json_setting" rows="12" style="width: 100%;">{"editorName":"编辑器名称","slogan":"口号","publishTime":"发布时间","version":"版本","intro":"介绍"}</textarea>
+					<textarea id="editor_title" rows="3" style="width: 100%;">自定义的标题</textarea>
 					<p>JSON data</p>
 					<textarea id="json_string" rows="12" style="width: 100%;" disabled="disabled">{"editorName":"JSON editor","slogan":"A simple JSON editor","publishTime":"2021-01-02T06:19:24+08:00","versions":[{"version":"0.19","intro":"last version"},{"version":"0.12","intro":"stable version"},{"version":"0.1","intro":"base version"}]}</textarea>
 				</td>
@@ -36,12 +36,12 @@
 			$("#json_loader").on('click',loadJSON).trigger('click');
 			
 			function loadJSON(){
+				const title=$("#editor_title").val();
 				const data=JSON.parse($("#json_string").val());
-				const lang=JSON.parse($("#json_setting").val());
 				const cfg={
 					container:'#json_con',
-					name:'Key name setting',
-					lang:lang,
+					name:title,
+					setting:{},
 				}	
 				Jeditor.init(data,cfg);
 			}

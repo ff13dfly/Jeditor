@@ -21,7 +21,7 @@
 		<nav>
 			<ul>
 				<li class="cat"><span>基础</span></li>
-					<div>
+					<div style="display: none;">
 						<li><a href="#basic"><span>基础显示</span></a></li>
 						<li><a href="#mode_edit" ><span>编辑模式</span></a></li>
 						<li><a href="#mode_header" ><span>隐藏头部</span></a></li>
@@ -29,6 +29,7 @@
 				<hr />
 				<li class="cat"><span>显示配置</span></li>
 					<div style="display: none;">
+						<li><a href="#view_title" ><span>标题</span></a></li>
 						<li><a href="#view_lang" ><span>多语言</span></a></li>
 						<li><a href="#view_note" ><span>注释</span></a></li>
 						<li><a href="#view_hide" ><span>隐藏</span></a></li>
@@ -88,6 +89,7 @@
 			const hash=location.hash.substr(1);
 			const page=!hash?'basic':hash;
 			$('a[href="#'+page+'"]').trigger('click');
+			$('a[href="#'+page+'"]').parent().parent().prev().trigger('click');
 		</script>
 	</body>
 </html>
