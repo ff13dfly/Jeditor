@@ -227,7 +227,6 @@
 			return typeof tmp;
 		},
 		setting:function(cfg){
-			console.log(cfg)
 			if(cfg.name)config.name=cfg.name;
 			if(cfg.lang)lang=self.clone(cfg.lang);
 			if(cfg.note)note=self.clone(cfg.note);
@@ -660,17 +659,27 @@
 			const thumb=v==''?'&nbsp;':'<img width="48" height="30" src="'+v+'">';
 			const size=v==''?'&nbsp;':self.formatSize(v.length);
 			
+			const max=!cfg || !cfg.maxSize?1024*1024:cfg.maxSize;
 			
 			agent.push(function(){
 				$("#"+id).off('blur').off('change').on('change',function(res){
 					const chain=$(this).attr('id').split('_');
 					const fa=res.target.files[0];
-					if(fa.size>cfg.maxSize) return $("#"+info_con).html('File max size:'+cfg.maxSize);
+					if(fa.size>max) return $("#"+info_con).html('File max size:'+max);
 					self.getBase64FromFile(fa,function(base64){
-						self.save(base64,chain);
+						//self.save(base64,chain);
 						const img='<img width="48" height="30" src="'+base64+'">';
 						$("#"+info_con).html(img);
 						$("#"+size_con).html(self.formatSize(fa.size));
+						const result={chain:chain,value:fa};
+						
+						if(events.onUpload!=null) events.onUpload(result,function(val){
+							//$("#"+info_con).html('uploaded');
+							setTimeout(function(){
+								self.save(val,chain);
+							},200);
+						});
+						
 					});
 				});
 			});

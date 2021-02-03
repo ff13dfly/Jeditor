@@ -23,7 +23,7 @@
 					<p>配置键值对应的名称，在方便阅读和理解的同时，能方便的支持多语言显示。<br><br>顶部按钮 <img src="../icon/exportSetting.png" style="width:18px;height:18px;"> 可导出配置进行保存。<br><br>顶部按钮 <img src="../icon/struct.png" style="width:18px;height:18px;"> 可切换到编辑模式，查看原始键值名。</p>
 					<hr />
 					<p>JSON data</p>
-					<textarea id="json_string" rows="12" style="width: 100%;">{"listNormal":"STATUS_PENDING"}</textarea>
+					<textarea id="json_string" rows="12" style="width: 100%;">{"imageUpload":""}</textarea>
 					<p style="width: 100%;text-align: center;"><button id="json_loader" class="button_sample">Load</button></p>
 				</td>
 			</tr>
@@ -36,8 +36,29 @@
 				const cfg={
 					container:'#json_con',
 					name:'Event onUpload',
-					onChange:function(){
+					format:{
+						'imageUpload':{
+							'type':'image',
+						},
+					},
+					onUpload:function(res,success){
+						const uploadURL='http://localhost/Jeditor/upload/api.php';
 						
+						let formData = new FormData();
+						formData.append("uploadfile",res.value);
+						
+						console.log(formData)
+						
+						$.ajax({
+							url:uploadURL, /*接口域名地址*/
+							type:'post',
+							data: formData,			//upload file and use the right key
+							contentType: false,
+							processData: false,
+							success:function(res){
+								console.log(res)
+							}
+	    				});
 					},
 				}	
 				Jeditor.init(data,cfg);
