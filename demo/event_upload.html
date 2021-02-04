@@ -41,13 +41,10 @@
 							'type':'image',
 						},
 					},
-					onUpload:function(res,success){
+					onUpload:function(res,successCallback){
 						const uploadURL='http://localhost/Jeditor/upload/api.php';
-						
-						let formData = new FormData();
+						const formData = new FormData();
 						formData.append("uploadfile",res.value);
-						
-						console.log(formData)
 						
 						$.ajax({
 							url:uploadURL, /*接口域名地址*/
@@ -55,8 +52,10 @@
 							data: formData,			//upload file and use the right key
 							contentType: false,
 							processData: false,
-							success:function(res){
-								console.log(res)
+							success:function(result){
+								const rep=JSON.parse(result);
+								//console.log(rep);
+								successCallback(rep.url);
 							}
 	    				});
 					},
