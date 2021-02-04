@@ -1,4 +1,9 @@
 <?php
+
+/*上传样板文件，返回对应的值供前端使用
+ * 
+ * 
+ * */
 $result=array(
 	'success'	=>	FALSE,
 );
@@ -22,7 +27,7 @@ $target=$path.substr($hash,6,7).'.'.$suffix;
 if(!is_dir($path)) mkdir($path, 0777,TRUE);
 
 if(copy($_FILES[$key]['tmp_name'], $target)){
-	$result['url']=$target;
+	$result['url']='../upload/up/'.substr($hash,0,2).'/'.substr($hash,2,2).'/'.substr($hash,4,2).'/'.substr($hash,6,7).'.'.$suffix;
 	$result['success']=TRUE;
 }
 

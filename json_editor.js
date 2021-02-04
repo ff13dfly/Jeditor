@@ -674,10 +674,9 @@
 						const result={chain:chain,value:fa};
 						
 						if(events.onUpload!=null) events.onUpload(result,function(val){
+							$("#"+info_con).html(`<img width="48" height="30" src="${val}">`);
+							
 							self.save(val,chain);
-							/*setTimeout(function(){
-								self.save(val,chain);
-							},200);*/
 						});
 						
 					});
