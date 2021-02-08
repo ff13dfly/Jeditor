@@ -657,7 +657,7 @@
 			const size_con='size_'+id;
 			const form='<input class="'+cls+' form-control '+config.clsFile+'" id="'+id+'" type="file" value="'+v+'" '+dis+' accept="image/png,image/jpeg,image/jpg,image/gif"/>';
 			const thumb=v==''?'&nbsp;':'<img width="48" height="30" src="'+v+'">';
-			const size=v==''?'&nbsp;':self.formatSize(v.length);
+			const size=(v=='' || cfg.skipSize?'&nbsp;':self.formatSize(v.length));
 			
 			const max=!cfg || !cfg.maxSize?1024*1024:cfg.maxSize;
 			
@@ -667,10 +667,10 @@
 					const fa=res.target.files[0];
 					if(fa.size>max) return $("#"+info_con).html('File max size:'+max);
 					self.getBase64FromFile(fa,function(base64){
-						//self.save(base64,chain);
+						
 						const img='<img width="48" height="30" src="'+base64+'">';
 						$("#"+info_con).html(img);
-						$("#"+size_con).html(self.formatSize(fa.size));
+						if(!cfg.skipSize) $("#"+size_con).html(self.formatSize(fa.size));
 						const result={chain:chain,value:fa};
 						
 						if(events.onUpload!=null) events.onUpload(result,function(val){
@@ -863,7 +863,7 @@
 			return `<style type="text/css">
 			#${id}{font-size: 16px;width: 100%;padding: 0px 0px 0px 0px;margin: 0px 0px 0px 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
 			#${id} hr{margin:5px 0px 5px 0px;height:1px;border:none;background:${config.ui.color.active};}
-			#${id} input{width:90%;height: ${ih}px;line-height:${ih}px;padding:0px 0px 0px 10px;margin:0px 0px 0px 0px;border:1px solid ${config.ui.color.basic};}
+			#${id} input{width:90%;height: ${ih}px;line-height:${ih}px;padding:0px 0px 0px 10px;margin:6px 0px 0px 0px;border:1px solid ${config.ui.color.basic};}
 			#${id} input[type=file]{height:${ih}px;font-size:16px;padding:0px 0px 0px 10px;border:none;}
 			#${id} select{width: 90%;height:${ih}px;font-size:16px;line-height:${ih}px;border-color:#CED4DA;padding:1px 0px 1px 10px;margin:0px 0px 0px 0px;}
 			#${id} .${config.clsLeft}{text-align:left}
