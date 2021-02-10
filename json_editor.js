@@ -580,10 +580,10 @@
 			}
 		
 			agent.push(function(){
-				$("."+config.clsTime).find('input').off('blur').on('blur',saveTime).on('input',function(){
+				$("#"+id).find('input').off('blur').on('blur',saveTime).on('input',function(){
 					$(this).css({'background':'#FFFFFF'});
 				});
-				$("."+config.clsTime).find('select').off('change').on('change',saveTime);
+				$("#"+id).find('select').off('change').on('change',saveTime);
 			});
 			
 			return `<table class="${config.clsTime}" id="${id}"><tr>
