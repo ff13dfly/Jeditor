@@ -417,7 +417,6 @@
 							}else{
 								ctx=self.getInput(id,v,disable);
 							}
-							
 							break;
 						case 'bool':
 							ctx=self.getInput(id,v,disable);
@@ -514,19 +513,17 @@
 		},
 
 		getTime:function(id,v,disable,cfg){
-			//console.log('time:'+v);
 			const idYear=hash(),idMonth=hash(),idDay=hash(),idHour=hash(),idMin=hash(),idSec=hash(),idZone=hash();
 			const mt=!cfg.format?moment(v):moment(v,cfg.format);
 			
 			const cy=mt.format('YYYY'),cm=mt.format('M'),cd=mt.format('D');
 			const ch=mt.format('H'),cn=mt.format('m'),cs=mt.format('s');
-			const cz=mt.format('Z');
-			
-			console.log('time zone:'+mt.utcOffset(v));
+			const cz=self.getTimeZone(mt);
+			const type=self.getTimeFormat(mt);			//记录原来的时间保存格式
 			
 			const dis=disable?'disabled="disabled"':'';
 			
-			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${self.getTimeZoneSelector(cz)}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
+			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${self.domTimeZoneSelector(cz)}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
 			
 			const saveTime=function(){
 				const year=parseInt($("#"+idYear).val());
@@ -535,7 +532,8 @@
 				let hour=parseInt($("#"+idHour).val());
 				let minister=parseInt($("#"+idMin).val());
 				let second=parseInt($("#"+idSec).val());
-				const zone=$("#"+idZone).val();
+				const zz=$("#"+idZone).val();
+				console.log(zz)
 				
 				//处理year的超限问题
 				if(isNaN(year)) return focus('#'+idYear,2020);
@@ -577,7 +575,7 @@
 				if(second<10) second='0'+second;
 				
 				//拼接成需要的字符串
-				const time=year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+zone;
+				const time=year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(zz=='+0:00'?'Z':zz);
 				
 				const chain=$('#'+id).attr('id').split('_');
 				self.save(time,chain);
@@ -610,14 +608,41 @@
 				<td><input class="${config.clsShort}" id="${idSec}" value="${cs}"></td>
 			</tr></table>`;
 		},
-		getTimeZoneSelector:function(zone){
+		
+		checkTimeFormat:function(mt){
+			const vers={
+				'ISO':/^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
+				'ExtendISO':/^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
+				'RFC2822':/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/,
+				'Stamp':/\d/,
+				'MicroStamp':/\d/,
+			}
+			console.log(mt);
+		},
+		getTimeFormat:function(mt){
+			//console.log(mt);
+		},
+		getTimeZone:function(mt){
+			if(mt._tzm!=undefined){
+				if(mt._tzm===0){
+					return 'Z';
+				}else{
+					const tz=mt._tzm/60;
+					const pre=mt._tzm>0?'+':'-';
+					return pre+(tz<10?'0':'')+tz+':00';
+				}
+			}else{
+				return mt.format('Z');
+			}
+		},
+		domTimeZoneSelector:function(zone){
 			let za='',zb='';
 			for(let i=1;i<13;i++){
 				const ztag=i<10?'0'+i:i;
 				const act=('-'+ztag+':00')==zone?'selected="selected"':'';
 				zb+=`<option value="-${ztag}:00"  ${act}>-${i}</option>`;
 			}
-			const act='0:00'==zone?'selected="selected"':'';
+			const act=('0:00'==zone || 'Z'==zone)?'selected="selected"':'';
 			const zc=`<option value="+0:00" ${act}>0</option>`;
 			for(let i=1;i<13;i++){
 				const ztag=i<10?'0'+i:i;
