@@ -527,9 +527,10 @@
 			const cz=self.getTimeZone(mt);
 			
 			const tzSelect=self.domTimeZoneSelector(cz);
-			const fmt=cfg.type?cfg.type:self.checkTimeFormat(mt);			//记录原来的时间保存格式
+			const fmt=cfg.format?{type:cfg.format}:self.checkTimeFormat(mt);			//记录原来的时间保存格式
 			const dis=disable?'disabled="disabled"':'';
 			
+			//console.log(fmt)
 			//console.log('time string:'+v+',format:'+fmt+',key:'+id);
 			
 			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${tzSelect}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
@@ -539,7 +540,7 @@
 				let month=parseInt($("#"+idMonth).val());
 				let day=parseInt($("#"+idDay).val());
 				let hour=parseInt($("#"+idHour).val());
-				let minister=parseInt($("#"+idMin).val());
+				let minute=parseInt($("#"+idMin).val());
 				let second=parseInt($("#"+idSec).val());
 				const zz=$("#"+idZone).val();
 				
@@ -565,27 +566,20 @@
 				if(hour>23) return focus('#'+idHour,23);
 				if(hour<0) return focus('#'+idHour,0);
 				
-				//处理minister的超限问题
-				if(isNaN(minister)) return focus('#'+idMin,59);
-				if(minister>59) return focus('#'+idMin,59);
-				if(minister<0) return focus('#'+idMin,0);
+				//处理minute的超限问题
+				if(isNaN(minute)) return focus('#'+idMin,59);
+				if(minute>59) return focus('#'+idMin,59);
+				if(minute<0) return focus('#'+idMin,0);
 				
 				//处理second的超限问题
 				if(isNaN(second)) return focus('#'+idSec,59);
 				if(second>59) return focus('#'+idSec,59);
 				if(second<0) return focus('#'+idSec,0);
 				
-				//格式化成正确的加0模式
-				if(month<10) month='0'+month;
-				if(day<10) day='0'+day;
-				if(hour<10) hour='0'+hour;
-				if(minister<10) minister='0'+minister;
-				if(second<10) second='0'+second;
-				
 				//拼接成需要的字符串
-				const value=year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(zz=='+0:00'?'Z':zz);
-				//const obj={year:year,month:month,day:day,hour:hour,minister:minister,second:second,timezone:zz};
-				//const value=self.saveTimeByFormat(obj,fmt);
+				//const value=year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(zz=='+0:00'?'Z':zz);
+				const obj={year:year,month:month,day:day,hour:hour,minute:minute,second:second,timezone:zz};
+				const value=self.saveTimeByFormat(obj,fmt);
 				
 				const chain=$('#'+id).attr('id').split('_');
 				self.save(value,chain);
@@ -619,38 +613,52 @@
 			</tr></table>`;
 		},
 		saveTimeByFormat:function(obj,format){
+			const dt=new Date();
+			const zz=dt.getTimezoneOffset();		//修正时差的值
+			
 			const timezone=obj.timezone;
 			const year=obj.year;
-			let month=obj.month;
+			let month=obj.month-1;
 			let day=obj.day;
 			let hour=obj.hour;
-			let minister=obj.minister;
+			let minute=obj.minute;
 			let second=obj.second;
+			let ms=obj.ms!=undefined?obj.ms:0;
 			
-			if(month<10) month='0'+month;
-			if(day<10) day='0'+day;
-			if(hour<10) hour='0'+hour;
-			if(minister<10) minister='0'+minister;
-			if(second<10) second='0'+second;
-			
-			return year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(timezone=='+0:00'?'Z':timezone);
+			const stamp=Date.UTC(year,month,day,hour,minute,second,ms)+zz*1000*60;
+			const mt=moment(stamp);
+			switch (format.type){
+				case 'ISO':
+					if(format.pattern){
+						return moment(stamp).format(format.pattern);
+					}else{
+						return moment(stamp).format('YYYY-MM-DDTHH:mm:ssZ');
+					}
+					break;
+				case 'stamp':
+					return Math.floor(stamp*0.001);
+					break;
+				case 'microstamp':
+					return stamp;
+					break;
+				default:
+					return stamp;
+					break;
+			}
 		},
 		checkTimeFormat:function(mt){
-			const vers={
+			/*const vers={
 				'ISO':/^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
 				'ExtendISO':/^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
 				'RFC2822':/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/,
 				'Stamp':/\d/,
-			}
+			}*/
 			const cfg=mt._pf;
-			//console.log(vers.ISO.exec(mt._i));
 			if(cfg.iso===true){
-				if(vers.ISO.exec(mt._i)){
-					return 'ISO';
-				}
-				return 'ExtendISO';			
+				return {type:'ISO',pattern:mt._f};			
 			}else if(cfg.rfc2822===true){
-				return 'RFC2822';
+				console.log(mt)
+				return {type:'RFC2822',pattern:mt._f};	
 			}
 		},
 		getTimeZone:function(mt){
