@@ -412,7 +412,12 @@
 							ctx=self.getImage(id,v,disable,format[k].default);
 							break;
 						case 'time':
-							ctx=self.getTime(id,v,disable,!format[k].default?{}:format[k].default);
+							if(moment(v).isValid()){
+								ctx=self.getTime(id,v,disable,!format[k].default?{}:format[k].default);
+							}else{
+								ctx=self.getInput(id,v,disable);
+							}
+							
 							break;
 						case 'bool':
 							ctx=self.getInput(id,v,disable);
@@ -509,12 +514,16 @@
 		},
 
 		getTime:function(id,v,disable,cfg){
+			//console.log('time:'+v);
 			const idYear=hash(),idMonth=hash(),idDay=hash(),idHour=hash(),idMin=hash(),idSec=hash(),idZone=hash();
 			const mt=!cfg.format?moment(v):moment(v,cfg.format);
 			
 			const cy=mt.format('YYYY'),cm=mt.format('M'),cd=mt.format('D');
 			const ch=mt.format('H'),cn=mt.format('m'),cs=mt.format('s');
 			const cz=mt.format('Z');
+			
+			console.log('time zone:'+mt.utcOffset(v));
+			
 			const dis=disable?'disabled="disabled"':'';
 			
 			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${self.getTimeZoneSelector(cz)}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
@@ -603,7 +612,6 @@
 		},
 		getTimeZoneSelector:function(zone){
 			let za='',zb='';
-			
 			for(let i=1;i<13;i++){
 				const ztag=i<10?'0'+i:i;
 				const act=('-'+ztag+':00')==zone?'selected="selected"':'';

@@ -26,9 +26,9 @@
 						<div style="width: 70%;float:left;text-align: left;margin: 0 auto;display: block;">Time format setting</div>
 						<div style="width: 28%;float:right;text-align: right;margin: 0 auto;display: block;"><button id="json_loader" class="button_sample">Load</button></div>
 					</div>
-					<textarea id="format_setting" rows="12" style="width: 100%;">{"timeNormal":{"type":"time"},"timeZone":{"type":"time","default":{"timeZone":true,"format":"YYYY-MM-DDTHH:mm:ssZ"}}}</textarea>
+					<textarea id="format_setting" rows="12" style="width: 100%;">{"timeNormal":{"type":"time"},"timeZone":{"type":"time","default":{"timeZone":true,"format":"YYYY-MM-DDTHH:mm:ssZ"}},"timeSimple":{"type":"time"},"timeStamp":{"type":"time"},"timeInvalid":{"type":"time"}}</textarea>
 					<p>JSON Data</p>
-					<textarea id="json_string" rows="12" style="width: 100%;" disabled="disabled">{"timeNormal":"2021-01-02T06:19:24+08:00","timeZone":"2021-01-02T06:19:24+08:00","timeStamp":1611588024}</textarea>
+					<textarea id="json_string" rows="12" style="width: 100%;" disabled="disabled">{"timeZone":"2021-01-02T06:19:24+11:00","timeNormal":"2021-02-03T07:33:21+08:00","timeSimple":"2020-12-23 20:41:45","timeStamp":1613218408,"timeInvalid":"Hello Jeditor"}</textarea>
 				</td>
 			</tr>
 		</table>
