@@ -514,16 +514,25 @@
 
 		getTime:function(id,v,disable,cfg){
 			const idYear=hash(),idMonth=hash(),idDay=hash(),idHour=hash(),idMin=hash(),idSec=hash(),idZone=hash();
-			const mt=!cfg.format?moment(v):moment(v,cfg.format);
+			
+			let mt;
+			if(cfg.format && cfg.format==='stamp'){
+				mt=moment(v*1000);
+			}else{
+				mt=moment(v).utcOffset(v);
+			}
 			
 			const cy=mt.format('YYYY'),cm=mt.format('M'),cd=mt.format('D');
 			const ch=mt.format('H'),cn=mt.format('m'),cs=mt.format('s');
 			const cz=self.getTimeZone(mt);
-			const type=self.getTimeFormat(mt);			//记录原来的时间保存格式
 			
+			const tzSelect=self.domTimeZoneSelector(cz);
+			const fmt=cfg.type?cfg.type:self.checkTimeFormat(mt);			//记录原来的时间保存格式
 			const dis=disable?'disabled="disabled"':'';
 			
-			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${self.domTimeZoneSelector(cz)}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
+			//console.log('time string:'+v+',format:'+fmt+',key:'+id);
+			
+			const zone=cfg.timeZone?`<td><select id="${idZone}" ${dis} style="margin-right:10px;">${tzSelect}</select></td>`:`<input type="hidden" id="${idZone}" value="${cz}">`;
 			
 			const saveTime=function(){
 				const year=parseInt($("#"+idYear).val());
@@ -533,7 +542,6 @@
 				let minister=parseInt($("#"+idMin).val());
 				let second=parseInt($("#"+idSec).val());
 				const zz=$("#"+idZone).val();
-				console.log(zz)
 				
 				//处理year的超限问题
 				if(isNaN(year)) return focus('#'+idYear,2020);
@@ -575,10 +583,12 @@
 				if(second<10) second='0'+second;
 				
 				//拼接成需要的字符串
-				const time=year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(zz=='+0:00'?'Z':zz);
+				const value=year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(zz=='+0:00'?'Z':zz);
+				//const obj={year:year,month:month,day:day,hour:hour,minister:minister,second:second,timezone:zz};
+				//const value=self.saveTimeByFormat(obj,fmt);
 				
 				const chain=$('#'+id).attr('id').split('_');
-				self.save(time,chain);
+				self.save(value,chain);
 			};
 			
 			
@@ -592,7 +602,7 @@
 				});
 				$("#"+id).find('select').off('change').on('change',saveTime);
 			});
-			
+
 			return `<table class="${config.clsTime}" id="${id}"><tr>
 				${zone}
 				<td><input class="${config.clsLong}" id="${idYear}" value="${cy}"></td>
@@ -608,19 +618,40 @@
 				<td><input class="${config.clsShort}" id="${idSec}" value="${cs}"></td>
 			</tr></table>`;
 		},
-		
+		saveTimeByFormat:function(obj,format){
+			const timezone=obj.timezone;
+			const year=obj.year;
+			let month=obj.month;
+			let day=obj.day;
+			let hour=obj.hour;
+			let minister=obj.minister;
+			let second=obj.second;
+			
+			if(month<10) month='0'+month;
+			if(day<10) day='0'+day;
+			if(hour<10) hour='0'+hour;
+			if(minister<10) minister='0'+minister;
+			if(second<10) second='0'+second;
+			
+			return year+'-'+month+'-'+day+'T'+hour+':'+minister+':'+second+(timezone=='+0:00'?'Z':timezone);
+		},
 		checkTimeFormat:function(mt){
 			const vers={
 				'ISO':/^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
 				'ExtendISO':/^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
 				'RFC2822':/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/,
 				'Stamp':/\d/,
-				'MicroStamp':/\d/,
 			}
-			console.log(mt);
-		},
-		getTimeFormat:function(mt){
-			//console.log(mt);
+			const cfg=mt._pf;
+			//console.log(vers.ISO.exec(mt._i));
+			if(cfg.iso===true){
+				if(vers.ISO.exec(mt._i)){
+					return 'ISO';
+				}
+				return 'ExtendISO';			
+			}else if(cfg.rfc2822===true){
+				return 'RFC2822';
+			}
 		},
 		getTimeZone:function(mt){
 			if(mt._tzm!=undefined){
