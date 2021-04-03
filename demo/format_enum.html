@@ -20,10 +20,10 @@
 					<div id="json_con"></div>
 				</td>
 				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
-					<p>配置键值对应的名称，在方便阅读和理解的同时，能方便的支持多语言显示。<br><br>顶部按钮 <img src="../icon/exportSetting.png" style="width:18px;height:18px;"> 可导出配置进行保存。<br><br>顶部按钮 <img src="../icon/struct.png" style="width:18px;height:18px;"> 可切换到编辑模式，查看原始键值名。</p>
+					<p>Jeditor枚举类型采用select的形式进行显示<br></p>
 					<hr />
 					<p>JSON data</p>
-					<textarea id="json_string" rows="12" style="width: 100%;">{"enumNormal":"FEMALE","enumMore":""}</textarea>
+					<textarea id="json_string" rows="12" style="width: 100%;">{"enumNormal":"FEMALE","enumMore":"BANK"}</textarea>
 					<p style="width: 100%;text-align: center;"><button id="json_loader" class="button_sample">Load</button></p>
 				</td>
 			</tr>
@@ -42,6 +42,14 @@
 							'data':[
 								{title:'女性',value:'FEMALE'},
 								{title:'男性',value:'MALE'},
+							],
+						},
+						'enumMore':{
+							'type':'enum',
+							'data':[
+								{title:'支付宝',value:'ALIPAY'},
+								{title:'微信支付',value:'WEPAY'},
+								{title:'银行转账',value:'BANK'},
 							],
 						},
 					},
