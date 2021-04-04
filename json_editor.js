@@ -729,7 +729,7 @@
 			const size_con='size_'+id;
 			const form='<input class="'+cls+' form-control '+config.clsFile+'" id="'+id+'" type="file" value="'+v+'" '+dis+' accept="image/png,image/jpeg,image/jpg,image/gif"/>';
 			const thumb=v==''?'&nbsp;':'<img width="48" height="30" src="'+v+'">';
-			const size=(v=='' || cfg.skipSize?'&nbsp;':self.formatSize(v.length));
+			const size=((v=='' || cfg.skipSize)?'&nbsp;':self.formatSize(v.length));
 			
 			const max=!cfg || !cfg.maxSize?1024*1024:cfg.maxSize;
 			

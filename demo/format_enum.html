@@ -7,7 +7,8 @@
 			body{width: 900px;margin: 0 auto;}
 			p{margin: 0 auto;font-size:14px;}
 			hr{border: none;width:100%;height: 1px;background: #000000;}
-			.button_sample{background: #9AB5C6;border: none;width: 100px;height: 30px;border-radius: 5px;}
+			.button_sample{background: #9AB5C6;border: none;width: 60px;height: 24px;line-height: 24px;border-radius: 5px;margin: 0px 0px 5px 0px;cursor: pointer;}
+		
 		</style>
 		<script type="text/javascript" src="../lib/jquery-3.1.1.min.js" ></script>
 		<script type="text/javascript" src="../lib/moment.min.js" ></script>
@@ -22,9 +23,14 @@
 				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
 					<p>Jeditor枚举类型采用select的形式进行显示<br></p>
 					<hr />
+					<div style="width: 100%;display: block;margin: 5px 0px 5px 0px;height: 20px;line-height: 20px;">
+						<div style="width: 70%;float:left;text-align: left;margin: 0 auto;display: block;">Enum format setting</div>
+						<div style="width: 28%;float:right;text-align: right;margin: 0 auto;display: block;"><button id="json_loader" class="button_sample">Load</button></div>
+					</div>
+					<textarea id="format_setting" rows="12" style="width: 100%;">{"enumNormal":{"type":"enum","data":[{"title":"女性","value":"FEMALE"},{"title":"男性","value":"MALE"}]},"enumMore":{"type":"enum","data":[{"title":"支付宝","value":"ALIPAY"},{"title":"微信支付","value":"WEPAY"},{"title":"银行转账","value":"BANK"}]}}</textarea>
+					
 					<p>JSON data</p>
-					<textarea id="json_string" rows="12" style="width: 100%;">{"enumNormal":"FEMALE","enumMore":"BANK"}</textarea>
-					<p style="width: 100%;text-align: center;"><button id="json_loader" class="button_sample">Load</button></p>
+					<textarea id="json_string" rows="3" disabled="disabled"  style="width: 100%;">{"enumNormal":"FEMALE","enumMore":"BANK"}</textarea>
 				</td>
 			</tr>
 		</table>
@@ -33,27 +39,13 @@
 			
 			function loadJSON(){
 				const data=JSON.parse($("#json_string").val());
+				const fmt=JSON.parse($("#format_setting").val());
+				
 				const cfg={
 					container:'#json_con',
 					name:'Enum format',
-					format:{
-						'enumNormal':{
-							'type':'enum',
-							'data':[
-								{title:'女性',value:'FEMALE'},
-								{title:'男性',value:'MALE'},
-							],
-						},
-						'enumMore':{
-							'type':'enum',
-							'data':[
-								{title:'支付宝',value:'ALIPAY'},
-								{title:'微信支付',value:'WEPAY'},
-								{title:'银行转账',value:'BANK'},
-							],
-						},
-					},
-				}	
+					format:fmt,
+				}
 				Jeditor.init(data,cfg);
 			}
 		</script>

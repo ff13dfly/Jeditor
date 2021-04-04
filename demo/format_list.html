@@ -35,10 +35,15 @@
 				const data=JSON.parse($("#json_string").val());
 				const cfg={
 					container:'#json_con',
-					name:'Email format',
+					name:'List format',
 					format:{
 						'listNormal':{
 							'type':'list',
+							'data':[
+								{title:'任务开始',value:'STATUS_START'},
+								{title:'等待输入',value:'STATUS_PENDING'},
+								{title:'任务成功',value:'STATUS_SUCCESS'},
+							],
 						},
 					},
 				}	
