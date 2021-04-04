@@ -419,7 +419,7 @@
 							}
 							break;
 						case 'bool':
-							ctx=self.getInput(id,v,disable);
+							ctx=self.getBool(id,v,disable);
 							break;
 						case 'file':
 							ctx=self.getFile(id,v,disable,!format[k].default?{}:format[k].default);
@@ -727,8 +727,10 @@
 			const cls=config.clsInput,dis=disable?'disabled="disabled"':'';
 			const info_con='file_'+id;
 			const size_con='size_'+id;
+			const preview_con='pv_'+id;
+			
 			const form='<input class="'+cls+' form-control '+config.clsFile+'" id="'+id+'" type="file" value="'+v+'" '+dis+' accept="image/png,image/jpeg,image/jpg,image/gif"/>';
-			const thumb=v==''?'&nbsp;':'<img width="48" height="30" src="'+v+'">';
+			const thumb=v==''?'&nbsp;':'<img width="48" height="30" style="cursor: pointer;"  src="'+v+'" id="'+preview_con+'">';
 			const size=((v=='' || cfg.skipSize)?'&nbsp;':self.formatSize(v.length));
 			
 			const max=!cfg || !cfg.maxSize?1024*1024:cfg.maxSize;
@@ -753,8 +755,52 @@
 						
 					});
 				});
+				
+				$("#"+preview_con).off('click').on('click',function(){
+					const val=$(this).attr('src');
+					self.preview(val);
+				});
 			});
 			return `<table><tr><td>${form}</td><td id="${info_con}">${thumb}</td><td id="${size_con}">${size}</td></tr></table>`;
+		},
+		preview:function(target){
+			const img=new Image();
+			img.src=target;
+			img.onload = function(){
+				const iw=img.width,ih=img.height;
+				const h=$(window).height(),w=$(window).width();
+				const size=self.calcPreview(iw,ih,w,h);
+				const dom=`<div id="preview" style="position:fixed;top:${size.top}px;left:${size.left}px;z-index: 1010;"><h3 style="position:relative;left:${size.width-180}px;top:50px;color:#F77113">点击空白处关闭</h3><img src="${target}" width="${size.width}" height="${size.height}" ></div>`;
+				$('body').append(dom);
+				
+				self.mask(function(){
+					$("#preview").remove();
+				});
+	       }
+		},
+		calcPreview:function(iw,ih,w,h){
+			const rate=0.6;
+			const result={top:0,left:0,width:0,height:0}
+			let sw,sh;
+			if(iw<w*rate){
+				result.width=iw;
+				result.height=ih;
+			}else{
+				result.width=w*rate;
+				result.height=ih*w*rate/iw;
+			}
+			result.left=(w-result.width)*0.5;
+			result.top=(h-result.height)*0.5;
+			return result;
+		},
+		mask:function(onClick){
+			const height=$(window).height();
+			const dom=`<div id="mask" style="display:none;position:fixed;top:0;left:0;width:100%;height:${height}px;background-color:black;z-index: 1001;-moz-opacity: 0.3;opacity: .30;filter: alpha(opacity=30);"></div>`;
+			
+			$('body').append(dom).find('#mask').show().on('click',function(){
+				$(this).remove();
+				onClick && onClick();
+			});
 		},
 		getFile:function(id,v,disable,cfg){
 			const cls=config.clsInput,dis=disable?'disabled="disabled"':'';

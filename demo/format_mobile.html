@@ -23,7 +23,7 @@
 					<p>配置键值对应的名称，在方便阅读和理解的同时，能方便的支持多语言显示。<br><br>顶部按钮 <img src="../icon/exportSetting.png" style="width:18px;height:18px;"> 可导出配置进行保存。<br><br>顶部按钮 <img src="../icon/struct.png" style="width:18px;height:18px;"> 可切换到编辑模式，查看原始键值名。</p>
 					<hr />
 					<p>JSON data</p>
-					<textarea id="json_string" rows="12" style="width: 100%;">{"listNormal":"STATUS_PENDING"}</textarea>
+					<textarea id="json_string" rows="12" style="width: 100%;">{"mobileNormal":"13366668888"}</textarea>
 					<p style="width: 100%;text-align: center;"><button id="json_loader" class="button_sample">Load</button></p>
 				</td>
 			</tr>
@@ -37,8 +37,8 @@
 					container:'#json_con',
 					name:'Mobile format',
 					format:{
-						'listNormal':{
-							'type':'list',
+						'mobileNormal':{
+							'type':'mobile',
 						},
 					},
 				}	
