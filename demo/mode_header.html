@@ -15,7 +15,7 @@
 		<table border="0" style="width: 100%;background: #EEEEEE;height: 600px;">
 			<tr>
 				<td style="width: 70%;padding: 10px 10px 10px 10px;background: #FFFFFF;height: 400px;" valign="top">
-					<div id="json_con"></div>
+					<div id="json_con" style="height: 100%;overflow:auto;"></div>
 				</td>
 				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
 					<p>通过设置参数setting.headerShow为false，可以隐藏头部的功能按钮，防止误操作，一般在给终端用户使用时进行设置。</p>
@@ -25,8 +25,6 @@
 						<div style="width: 48%;float:right;text-align: right;margin: 0 auto;display: block;"><button id="json_loader">Load</button></div>
 					</div>
 					<textarea id="json_string" rows="18" style="width: 100%;">{"name":"JSON editor","basic key":"Easy to edit json data","numberSample":"od0012","timeSample":"2014-09-08T08:02:17-05:00","normal object":{"key a":"row a","key b":"row b","key c":{"suba":"Hello world","sub b":"Good day"},"subArray":["a","b","c","d"],"timeSample":"2015-03-08T17:02:17-05:00"},"basic Array":["element a","element b","element c"],"complexArray":[{"eleA":["aa","bb","cc"],"eleB":"good news"}],"enumSample":"FEMALE","images":""}</textarea>
-					<p>Result</p>
-					<textarea id="json_result" rows="12" style="width: 100%;" disabled="disabled"></textarea>
 				</td>
 			</tr>
 		</table>
@@ -40,9 +38,6 @@
 					container:'#json_con',
 					setting:{
 						headerShow:false,
-					},
-					onChange:function(res){
-						$("#json_result").val(JSON.stringify(res));
 					},
 				}	
 				Jeditor.init(data,cfg);

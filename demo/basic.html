@@ -14,8 +14,8 @@
 	<body>
 		<table border="0" style="width: 100%;background: #EEEEEE;height: 600px;">
 			<tr>
-				<td style="width: 70%;padding: 10px 10px 10px 10px;background: #FFFFFF;height: 400px;" valign="top">
-					<div id="json_con"></div>
+				<td style="width: 70%;padding: 10px 10px 10px 10px;background: #FFFFFF;height:500px;" valign="top">
+					<div id="json_con" style="height: 100%;overflow:auto;"></div>
 				</td>
 				<td style="width: 30%;padding: 10px 10px 10px 10px;" valign="top">
 					<p>Jeditor对JSON进行编辑，仅需一行代码：<br>Jeditor.init(json,{"container":ID})<br><br>如果您需要更细节的配置和更符合使用要求的输入，可以通过Jeditor丰富的配置功能来实现。</p>
@@ -27,8 +27,8 @@
 						<div style="width: 48%;float:right;text-align: right;margin: 0 auto;display: block;"><button id="json_loader">Load</button></div>
 					</div>
 					<textarea id="json_string" rows="18" style="width: 100%;">{"name":"JSON editor","basic key":"Easy to edit json data","numberSample":"od0012","timeSample":"2014-09-08T08:02:17-05:00","boolSample":true,"normal object":{"key a":"row a","key b":"row b","key c":{"suba":"Hello world","sub b":"Good day"},"subArray":["a","b","c","d"],"timeSample":"2015-03-08T17:02:17-05:00"},"basic Array":["element a","element b","element c"],"complexArray":[{"eleA":["aa","bb","cc"],"eleB":"good news"}],"enumSample":"FEMALE","images":""}</textarea>
-					<p>Result</p>
-					<textarea id="json_result" rows="12" style="width: 100%;" disabled="disabled"></textarea>
+					<!--<p>Result</p>
+					<textarea id="json_result" rows="12" style="width: 100%;" disabled="disabled"></textarea>-->
 				</td>
 			</tr>
 		</table>
