@@ -733,24 +733,21 @@
         },
 
         getBool: function(id, v, disable, cfg) {
+            cconsole.log(id + ':' + v);
             const checked = v ? '"checked"' : '';
             agent.push(function() {
                 if (v == true) {
                     $("#" + id).trigger('click');
                 }
 
-                $("#" + id).off('blur').on('click', function() {
-                    const val = $(this).is(':checked');
+                $("#" + id).off('click').on('click', function() {
+                    const val = $('#' + id).is(':checked');
                     const chain = $(this).attr('id').split(config.connector);
 
-                    if (val) $(this).attr("checked", "checked");
-                    else $(this).removeAttr('checked');
-                    const dd = !val;
+                    if (!val) $('#' + id).attr("checked", "checked");
+                    else $('#' + id).removeAttr('checked');
 
-                    console.log('clicked,value:' + val + ',changed:' + dd);
-
-                    $(this).val(!dd);
-                    self.save(dd, chain);
+                    self.save(val, chain);
                 });
             });
             return `<div class="${config.clsBool}">
