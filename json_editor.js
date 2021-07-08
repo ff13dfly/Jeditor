@@ -2,7 +2,7 @@
 (function($) {
     const appName = "Jeditor";
     let cache, backup;
-    const agent = []; //其他需要在dom加载之后运行的程序的队列
+    let agent = []; //其他需要在dom加载之后运行的程序的队列
     const hash = function(n, pre) { return (!pre ? 'c' : pre) + Math.random().toString(32).substr(n != undefined ? n : 6) };
 
     const icons = {
@@ -81,6 +81,7 @@
 
     const self = {
         init: function(obj, cfg, skip) {
+            agent = [];
             cache = obj;
             if (!skip) {
                 backup = {
